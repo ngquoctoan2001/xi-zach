@@ -1,0 +1,459 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mockup giao diện Xì Dách</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Chakra+Petch:ital,wght@0,500;0,600;0,700;1,600;1,700&family=Saira+Extra+Condensed:wght@600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  /* Bộ màu, font lấy theo phong cách Meta Radar (meta-wildrift/src/css/tokens.css) */
+  :root {
+    --bg-0: #06050d; --bg-1: #0b0a1b; --bg-2: #141130;
+    --panel: rgba(22, 18, 48, .82); --panel-2: rgba(14, 11, 32, .86);
+    --stroke: rgba(255, 255, 255, .09); --stroke-2: rgba(255, 255, 255, .18);
+    --text: #f6f4ff; --text-2: #cbc6e8; --text-3: #8d87b3;
+    --accent: #38e1ff; --accent-rgb: 56 225 255; --accent-2: #8b5cff; --gold: #ffcf6b; --gold-rgb: 255 207 107;
+    --win: #2cf5a0; --win-rgb: 44 245 160; --lose: #ff3d6e; --lose-rgb: 255 61 110;
+    --draw: #8fb0ff; --draw-rgb: 143 176 255; --penalty: #ffc53d; --penalty-rgb: 255 197 61;
+    --special: #c07cff; --special-rgb: 192 124 255;
+    --ink: #07061a;
+    --f-display: 'Saira Extra Condensed', 'Arial Narrow', sans-serif;
+    --f-hud: 'Chakra Petch', 'Segoe UI', sans-serif;
+    --f-body: 'Be Vietnam Pro', 'Segoe UI', sans-serif;
+  }
+  .is-win { --c: var(--win); --c-rgb: var(--win-rgb); }
+  .is-lose { --c: var(--lose); --c-rgb: var(--lose-rgb); }
+  .is-draw { --c: var(--draw); --c-rgb: var(--draw-rgb); }
+  .is-penalty { --c: var(--penalty); --c-rgb: var(--penalty-rgb); }
+  .is-special { --c: var(--special); --c-rgb: var(--special-rgb); }
+  .is-accent { --c: var(--accent); --c-rgb: var(--accent-rgb); }
+  .is-gold { --c: var(--gold); --c-rgb: var(--gold-rgb); }
+  .is-muted { --c: var(--text-3); --c-rgb: 141 135 179; }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 28px; color: var(--text); font: 400 15px/1.5 var(--f-body); -webkit-font-smoothing: antialiased;
+         background: radial-gradient(ellipse 60% 40% at 80% 0%, rgb(var(--accent-rgb) / .08), transparent 70%), var(--bg-0); }
+  svg { display: block; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .num { font-variant-numeric: tabular-nums; }
+  .page-kicker { font: 700 12px/1 var(--f-hud); letter-spacing: .24em; color: var(--accent); }
+  .page-title { margin: 8px 0 4px; font: 900 48px/.95 var(--f-display); text-transform: uppercase; }
+  .page-sub { margin: 0 0 6px; color: var(--text-2); }
+  .frame-title { margin: 34px 0 12px; font: 700 13px/1 var(--f-hud); letter-spacing: .2em; color: var(--text-3); text-transform: uppercase; }
+
+  /* ---------- khung chung: nền tím than + lưới + quầng sáng ---------- */
+  .frame { position: relative; overflow: hidden; isolation: isolate; border: 1px solid var(--stroke-2); border-radius: 18px;
+           background: radial-gradient(ellipse 55% 50% at 80% 18%, rgb(var(--accent-rgb) / .10), transparent 70%),
+                       radial-gradient(ellipse 60% 55% at 15% 100%, rgb(139 92 255 / .16), transparent 70%),
+                       linear-gradient(160deg, var(--bg-2) 0%, var(--bg-1) 45%, var(--bg-0) 100%); }
+  .frame::before { content: ""; position: absolute; inset: 0; z-index: -1;
+           background-image: linear-gradient(rgba(255,255,255,.045) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.045) 1px, transparent 1px);
+           background-size: 56px 56px;
+           -webkit-mask-image: radial-gradient(ellipse 80% 75% at 50% 45%, #000 10%, transparent 75%); mask-image: radial-gradient(ellipse 80% 75% at 50% 45%, #000 10%, transparent 75%); }
+  .desktop { width: 1280px; height: 720px; }
+  .phone { width: 740px; height: 360px; border-radius: 30px; border: 8px solid #1c1a33; box-shadow: 0 0 0 1px var(--stroke-2); }
+
+  /* ---------- logo chữ ---------- */
+  .wordmark { display: flex; align-items: center; gap: 8px; }
+  .wordmark b { font: 900 30px/.9 var(--f-display); letter-spacing: .01em; padding-top: 4px;
+                background: linear-gradient(180deg, #fff 42%, #bdefff 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .wordmark i { position: relative; isolation: isolate; font: 900 15px/1 var(--f-display); font-style: normal; letter-spacing: .16em; color: var(--ink); padding: 5px 10px 4px 11px;
+                filter: drop-shadow(0 0 10px rgb(var(--accent-rgb) / .55)); }
+  .wordmark i::before { content: ""; position: absolute; inset: 0; z-index: -1; clip-path: polygon(5px 0, 100% 0, calc(100% - 5px) 100%, 0 100%);
+                background: linear-gradient(100deg, var(--accent), #9ff0ff 55%, #b9a3ff); }
+  .wordmark i span { display: block; transform: skewX(-8deg); }
+  .phone .wordmark b { font-size: 20px; } .phone .wordmark i { font-size: 11px; padding: 3px 7px 2px 8px; }
+
+  /* ---------- nhãn, chip ---------- */
+  .chip { display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 11px; border-radius: 7px; white-space: nowrap;
+          font: 700 12px/1 var(--f-hud); letter-spacing: .12em; text-transform: uppercase; color: var(--text-2);
+          background: rgba(255,255,255,.07); border: 1px solid var(--stroke); }
+  .chip[class*="is-"] { color: var(--c); background: rgb(var(--c-rgb) / .12); border-color: rgb(var(--c-rgb) / .4); }
+  .phone .chip { height: 20px; padding: 0 7px; font-size: 9px; border-radius: 5px; }
+  .codetag { display: flex; align-items: stretch; height: 30px; font-family: var(--f-hud);
+             clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px); }
+  .codetag span { display: flex; align-items: center; padding: 0 10px; background: rgba(255,255,255,.08); font-weight: 700; font-size: 11px; letter-spacing: .22em; color: var(--text-2); }
+  .codetag b { display: flex; align-items: center; padding: 0 12px; background: linear-gradient(120deg, var(--accent), var(--accent-2)); color: var(--ink); font-weight: 700; font-size: 16px; letter-spacing: .06em; }
+  .phone .codetag { height: 22px; clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px); }
+  .phone .codetag span { font-size: 8px; padding: 0 6px; } .phone .codetag b { font-size: 11px; padding: 0 8px; }
+
+  /* ---------- thanh trên của bàn ---------- */
+  .topbar { position: absolute; left: 0; right: 0; top: 0; z-index: 5; display: flex; align-items: center; justify-content: space-between; padding: 16px 22px; }
+  .phone .topbar { padding: 6px 10px; }
+  .topleft { display: flex; align-items: center; gap: 12px; }
+  .phone .topleft { gap: 6px; }
+  .sep { width: 2px; height: 30px; background: linear-gradient(transparent, rgba(255,255,255,.35), transparent); }
+  .phone .sep { height: 18px; }
+  .roomname { font: 700 18px/1 var(--f-hud); letter-spacing: .08em; text-transform: uppercase; }
+  .phone .roomname { font-size: 11px; }
+  .icons { display: flex; gap: 8px; }
+  .iconbtn { width: 44px; height: 44px; display: grid; place-items: center; border-radius: 11px; background: rgba(255,255,255,.05); border: 1px solid var(--stroke-2); color: var(--text); }
+  .iconbtn svg { width: 19px; height: 19px; }
+  .phone .iconbtn { width: 32px; height: 32px; border-radius: 9px; } .phone .iconbtn svg { width: 15px; height: 15px; }
+
+  /* ---------- mặt bàn kiểu radar ---------- */
+  .table { position: absolute; border-radius: 50%; isolation: isolate;
+           background: radial-gradient(ellipse at 50% 45%, #231c5c 0%, #17123f 45%, #0d0b26 100%);
+           box-shadow: 0 0 0 1px rgb(var(--accent-rgb) / .55), 0 0 0 6px rgba(56,225,255,.06), 0 0 46px rgb(var(--accent-rgb) / .22),
+                       inset 0 0 90px rgba(139,92,255,.30), 0 30px 60px rgba(0,0,0,.55); }
+  .table::before { content: ""; position: absolute; inset: 0; border-radius: 50%; z-index: -1;
+           background: repeating-radial-gradient(ellipse at 50% 50%, transparent 0 58px, rgb(var(--accent-rgb) / .10) 59px 60px);
+           -webkit-mask-image: radial-gradient(ellipse at 50% 50%, #000 30%, transparent 72%); mask-image: radial-gradient(ellipse at 50% 50%, #000 30%, transparent 72%); }
+  .table::after { content: ""; position: absolute; left: 50%; top: 0; bottom: 0; width: 1px; background: linear-gradient(transparent, rgb(var(--accent-rgb) / .14), transparent); }
+  .desktop .table { left: 150px; top: 100px; width: 980px; height: 460px; }
+  .phone .table { left: 70px; top: 54px; width: 584px; height: 232px; }
+  .phone .table::before { background: repeating-radial-gradient(ellipse at 50% 50%, transparent 0 30px, rgb(var(--accent-rgb) / .10) 31px 32px); }
+
+  /* ---------- giữa bàn ---------- */
+  .center { position: absolute; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; text-align: center; }
+  .stock { position: relative; }
+  .stock img { position: absolute; border-radius: 6px; box-shadow: 0 6px 14px rgba(0,0,0,.5); }
+  .desktop .stock { width: 62px; height: 93px; margin-bottom: 14px; } .desktop .stock img { width: 62px; }
+  .phone .stock { width: 30px; height: 45px; margin-bottom: 6px; } .phone .stock img { width: 30px; }
+  .turn { position: relative; isolation: isolate; display: inline-flex; align-items: center; gap: 12px; padding: 0 26px 0 22px; height: 46px; color: var(--ink);
+          filter: drop-shadow(0 0 22px rgb(var(--accent-rgb) / .55)); }
+  .turn::before { content: ""; position: absolute; inset: 0; z-index: -1; clip-path: polygon(14px 0, 100% 0, calc(100% - 14px) 100%, 0 100%);
+          background: linear-gradient(100deg, var(--accent), #9ff0ff 60%, #b9a3ff); }
+  .turn b { font: 900 30px/1 var(--f-display); text-transform: uppercase; transform: skewX(-8deg); margin-top: 3px; }
+  .turn em { font: 700 italic 22px/1 var(--f-hud); font-style: italic; }
+  .phone .turn { height: 26px; padding: 0 14px 0 12px; gap: 6px; } .phone .turn::before { clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%); }
+  .phone .turn b { font-size: 17px; } .phone .turn em { font-size: 12px; }
+  .round-info { margin-top: 12px; font: 700 12px/1 var(--f-hud); letter-spacing: .22em; color: var(--text-2); text-transform: uppercase; }
+  .phone .round-info { margin-top: 6px; font-size: 8px; }
+
+  /* ---------- ghế ---------- */
+  .seat { position: absolute; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .phone .seat { gap: 3px; }
+  .mini { display: flex; }
+  .mini img { border-radius: 4px; box-shadow: 0 3px 8px rgba(0,0,0,.55); }
+  .desktop .mini img { width: 40px; } .desktop .mini img + img { margin-left: -26px; }
+  .phone .mini img { width: 21px; border-radius: 3px; } .phone .mini img + img { margin-left: -14px; }
+  .plate { position: relative; display: flex; align-items: center; gap: 10px; padding: 6px 14px 6px 6px; min-width: 168px;
+           background: linear-gradient(180deg, var(--panel), var(--panel-2)); border: 1px solid var(--stroke-2);
+           clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+           box-shadow: inset 0 1px 0 rgba(255,255,255,.07); }
+  .plate::before { content: ""; position: absolute; left: 0; top: 10px; bottom: 10px; width: 3px; background: var(--c, transparent); box-shadow: 0 0 12px var(--c, transparent); }
+  .phone .plate { gap: 5px; padding: 3px 8px 3px 3px; min-width: 0; clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px); }
+  .phone .plate::before { top: 6px; bottom: 6px; width: 2px; }
+  .avatar { position: relative; flex: none; display: grid; place-items: center; border-radius: 11px; font: 900 22px/1 var(--f-display); color: var(--ink);
+            border: 2px solid rgba(255,255,255,.25); }
+  .desktop .avatar { width: 46px; height: 46px; } .phone .avatar { width: 28px; height: 28px; border-radius: 7px; font-size: 14px; border-width: 1.5px; }
+  .meta { display: flex; flex-direction: column; gap: 3px; }
+  .name { font: 700 15px/1 var(--f-hud); letter-spacing: .06em; text-transform: uppercase; white-space: nowrap; }
+  .bal { font: 600 13px/1 var(--f-hud); color: var(--text-3); white-space: nowrap; letter-spacing: .02em; }
+  .bal b { color: var(--gold); font-weight: 700; }
+  .phone .name { font-size: 10px; } .phone .bal { font-size: 9px; }
+  .plate-wrap { position: relative; }
+  .dealer { position: absolute; top: -12px; right: -10px; z-index: 3; display: grid; place-items: center; width: 34px; height: 36px; padding-bottom: 6px;
+            clip-path: polygon(0 0, 100% 0, 100% 70%, 50% 100%, 0 70%); background: linear-gradient(180deg, #ffe9b8, var(--gold));
+            color: var(--ink); font: 900 14px/1 var(--f-display); letter-spacing: .02em; filter: drop-shadow(0 0 10px rgb(var(--gold-rgb) / .7)); }
+  .phone .dealer { width: 22px; height: 24px; font-size: 9px; top: -6px; right: -6px; padding-bottom: 4px; }
+  .tag { display: inline-flex; align-items: center; gap: 5px; height: 26px; padding: 0 10px; border-radius: 7px; white-space: nowrap;
+         background: rgba(7,6,20,.84); border: 1px solid rgb(var(--c-rgb) / .75); color: var(--c);
+         font: 700 12px/1 var(--f-hud); letter-spacing: .12em; text-transform: uppercase; box-shadow: 0 0 14px rgb(var(--c-rgb) / .3); }
+  .tag svg { width: 13px; height: 13px; }
+  .tag b { font: 900 17px/1 var(--f-display); letter-spacing: .02em; margin-top: 2px; }
+  .phone .tag { height: 17px; padding: 0 6px; font-size: 8px; border-radius: 5px; gap: 3px; } .phone .tag b { font-size: 11px; } .phone .tag svg { width: 9px; height: 9px; }
+  .seat.active .plate { border-color: rgb(var(--accent-rgb) / .9); box-shadow: 0 0 0 1px rgb(var(--accent-rgb) / .4), 0 0 22px rgb(var(--accent-rgb) / .35); }
+  .timer { position: absolute; left: 10px; right: 10px; bottom: 0; height: 3px; background: rgba(255,255,255,.08); }
+  .timer i { display: block; width: 80%; height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-2)); box-shadow: 0 0 10px var(--accent); }
+  .empty .plate { border-style: dashed; background: rgba(14,11,32,.5); }
+  .empty .avatar { background: transparent; border: 2px dashed rgba(255,255,255,.3); color: var(--text-3); }
+  .sit { font: 700 13px/1 var(--f-hud); letter-spacing: .12em; text-transform: uppercase; color: var(--accent); }
+  .phone .sit { font-size: 9px; }
+
+  /* ---------- bài của mình ---------- */
+  .hand { position: absolute; transform: translate(-50%, -50%); display: flex; align-items: flex-end; gap: 16px; }
+  .hand .cards { display: flex; filter: drop-shadow(0 0 18px rgb(var(--accent-rgb) / .25)); }
+  .hand .cards img { border-radius: 9px; box-shadow: 0 10px 22px rgba(0,0,0,.6); }
+  .desktop .hand .cards img { width: 100px; } .desktop .hand .cards img + img { margin-left: -42px; }
+  .phone .hand { gap: 6px; } .phone .hand .cards img { width: 50px; border-radius: 5px; } .phone .hand .cards img + img { margin-left: -21px; }
+  .points { display: flex; flex-direction: column; align-items: flex-start; padding-bottom: 6px; }
+  .points b { font: 900 74px/.8 var(--f-display); background: linear-gradient(180deg, #fff 40%, #9ff0ff 100%); -webkit-background-clip: text; background-clip: text; color: transparent;
+              filter: drop-shadow(0 0 16px rgb(var(--accent-rgb) / .45)); }
+  .points small { font: 700 12px/1 var(--f-hud); letter-spacing: .26em; color: var(--accent); margin-top: 6px; }
+  .phone .points b { font-size: 36px; } .phone .points small { font-size: 7px; margin-top: 3px; }
+
+  /* ---------- nút hành động ---------- */
+  .actions { position: absolute; display: flex; gap: 14px; }
+  .act { position: relative; isolation: isolate; display: inline-flex; align-items: center; justify-content: center; gap: 12px; border: 0; cursor: pointer; color: var(--ink); background: none; }
+  .act::before { content: ""; position: absolute; inset: 0; z-index: -1; clip-path: polygon(14px 0, 100% 0, calc(100% - 14px) 100%, 0 100%); }
+  .act.primary { filter: drop-shadow(0 0 18px rgb(var(--accent-rgb) / .55)); } .act.primary::before { background: linear-gradient(100deg, var(--accent), #9ff0ff 55%, #b9a3ff); }
+  .act.gold { filter: drop-shadow(0 0 18px rgb(var(--gold-rgb) / .45)); } .act.gold::before { background: linear-gradient(100deg, #ffe9b8, var(--gold) 60%, #ffb347); }
+  .act b { font: 900 34px/1 var(--f-display); text-transform: uppercase; transform: skewX(-8deg); margin-top: 3px; letter-spacing: .03em; }
+  .act kbd { font: 700 13px/1 var(--f-hud); padding: 4px 6px; border-radius: 5px; border: 1.5px solid rgba(7,6,20,.45); }
+  .desktop .actions { right: 120px; bottom: 34px; } .desktop .act { width: 168px; height: 60px; }
+  .phone .actions { right: 12px; bottom: 14px; flex-direction: column; gap: 8px; } .phone .act { width: 74px; height: 44px; }
+  .phone .act::before { clip-path: polygon(9px 0, 100% 0, calc(100% - 9px) 100%, 0 100%); } .phone .act b { font-size: 22px; } .phone .act kbd { display: none; }
+
+  .watchers { position: absolute; left: 22px; bottom: 18px; display: flex; align-items: center; gap: 7px; font: 700 12px/1 var(--f-hud); letter-spacing: .16em; color: var(--text-3); text-transform: uppercase; }
+  .watchers svg { width: 15px; height: 15px; }
+
+  /* ---------- sảnh ---------- */
+  .app { display: grid; grid-template-columns: 236px minmax(0, 1fr); height: 100%; }
+  .side { display: flex; flex-direction: column; padding: 22px 14px; background: linear-gradient(180deg, #0e0c22, #09081a); border-right: 1px solid var(--stroke); }
+  .side .wordmark { padding: 0 8px 20px; border-bottom: 1px solid var(--stroke); }
+  .side-title { margin: 22px 8px 10px; font: 700 11px/1 var(--f-hud); letter-spacing: .2em; color: var(--text-3); }
+  .navi { display: flex; align-items: center; gap: 12px; padding: 11px 12px; border-radius: 12px; border: 1px solid transparent; color: var(--text-2); font: 600 14px/1 var(--f-body); margin-bottom: 4px; }
+  .navi svg { width: 18px; height: 18px; }
+  .navi.on { color: var(--text); background: rgb(var(--accent-rgb) / .08); border-color: rgb(var(--accent-rgb) / .35); }
+  .navi.on svg { color: var(--accent); }
+  .wallet { margin-top: auto; padding: 14px; border-radius: 14px; border: 1px solid var(--stroke);
+            background: radial-gradient(ellipse 80% 90% at 0% 0%, rgb(var(--gold-rgb) / .14), transparent 70%), linear-gradient(180deg, var(--panel), var(--panel-2)); }
+  .wallet small { display: block; font: 700 11px/1 var(--f-hud); letter-spacing: .22em; color: var(--text-3); }
+  .wallet b { display: block; margin-top: 8px; font: 900 40px/.9 var(--f-display); color: var(--gold); text-shadow: 0 0 22px rgb(var(--gold-rgb) / .35); }
+  .wallet b span { font-size: 18px; margin-left: 4px; color: var(--text-2); text-shadow: none; }
+  .me { display: flex; align-items: center; gap: 10px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--stroke); }
+  .me .avatar { width: 36px; height: 36px; font-size: 18px; border-radius: 9px; }
+  .me b { display: block; font: 700 13px/1.2 var(--f-hud); letter-spacing: .06em; text-transform: uppercase; }
+  .me span { font-size: 12px; color: var(--text-3); }
+  .main { padding: 24px 26px; min-width: 0; }
+  .head { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; padding: 22px 24px; border-radius: 20px; border: 1px solid var(--stroke);
+          background: radial-gradient(ellipse 50% 90% at 0% 0%, rgb(var(--accent-rgb) / .12), transparent 70%), linear-gradient(180deg, var(--panel), var(--panel-2)); }
+  .head-kicker { font: 700 12px/1 var(--f-hud); letter-spacing: .24em; color: var(--accent); }
+  .head h1 { margin: 8px 0 6px; font: 900 52px/.95 var(--f-display); text-transform: uppercase; }
+  .head p { margin: 0; color: var(--text-2); font-size: 15px; }
+  .head-actions { display: flex; gap: 10px; align-items: center; }
+  .input { height: 44px; width: 170px; padding: 0 14px; border-radius: 11px; border: 1px solid var(--stroke-2); background: #0c0f20; color: var(--text); font: 600 14px/1 var(--f-hud); letter-spacing: .1em; }
+  .input::placeholder { color: var(--text-3); letter-spacing: .06em; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 44px; padding: 0 18px; border-radius: 11px; border: 1px solid var(--stroke-2);
+         background: rgba(255,255,255,.05); color: var(--text); font: 700 13px/1 var(--f-hud); letter-spacing: .14em; text-transform: uppercase; cursor: pointer; }
+  .btn svg { width: 16px; height: 16px; }
+  .btn-grad { border: 0; color: var(--ink); background: linear-gradient(115deg, var(--accent), #a2a0ff); box-shadow: 0 0 22px rgb(var(--accent-rgb) / .3); }
+  .btn[disabled] { opacity: .45; cursor: not-allowed; box-shadow: none; }
+  .toolbar { display: flex; align-items: center; justify-content: space-between; margin: 20px 0 16px; }
+  .tabs { display: flex; gap: 6px; padding: 5px; border-radius: 13px; background: rgba(255,255,255,.04); border: 1px solid var(--stroke); }
+  .tab { display: inline-flex; align-items: center; gap: 8px; height: 34px; padding: 0 13px; border-radius: 9px; color: var(--text-2); font: 600 13px/1 var(--f-body); }
+  .tab span { padding: 2px 7px; border-radius: 99px; background: rgba(255,255,255,.08); font: 700 11px/1.3 var(--f-hud); }
+  .tab.on { background: rgba(255,255,255,.1); color: var(--text); } .tab.on span { background: var(--accent); color: var(--ink); }
+  .count { font: 700 12px/1 var(--f-hud); letter-spacing: .18em; color: var(--text-3); text-transform: uppercase; }
+  .count b { color: var(--accent); }
+  .rooms { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  .room { border-radius: 18px; overflow: hidden; border: 1px solid var(--stroke); background: linear-gradient(180deg, var(--panel), var(--panel-2)); }
+  .room.hot { border-color: rgb(var(--accent-rgb) / .45); box-shadow: 0 16px 40px rgba(0,0,0,.45); }
+  .room-viz { position: relative; height: 112px; overflow: hidden;
+              background: radial-gradient(ellipse 60% 70% at 50% 60%, rgb(var(--c-rgb) / .16), transparent 70%), linear-gradient(180deg, #120f30, #0b0920); border-bottom: 1px solid var(--stroke); }
+  .mini-table { position: absolute; left: 50%; top: 56px; width: 168px; height: 70px; transform: translate(-50%, -50%); border-radius: 50%;
+                background: radial-gradient(ellipse at 50% 45%, #231c5c, #120f33); box-shadow: 0 0 0 1px rgb(var(--c-rgb) / .6), 0 0 22px rgb(var(--c-rgb) / .25); }
+  .mini-table i { position: absolute; width: 12px; height: 12px; border-radius: 4px; transform: translate(-50%, -50%); background: #26224a; border: 1px solid rgba(255,255,255,.18); }
+  .mini-table i.f { background: var(--c); border-color: transparent; box-shadow: 0 0 8px var(--c); }
+  .mini-table i.d { background: var(--gold); box-shadow: 0 0 8px var(--gold); border-color: transparent; }
+  .room-state { position: absolute; top: 12px; left: 12px; }
+  .room-lock { position: absolute; top: 12px; right: 12px; width: 30px; height: 30px; border-radius: 8px; display: grid; place-items: center; background: rgba(7,6,20,.8); border: 1px solid var(--stroke-2); color: var(--text-2); }
+  .room-lock svg { width: 15px; height: 15px; }
+  .room-body { padding: 14px 16px 16px; }
+  .room-name { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+  .room-name b { font: 700 18px/1.1 var(--f-hud); letter-spacing: .05em; text-transform: uppercase; }
+  .room-name span { font: 600 12px/1 var(--f-hud); letter-spacing: .14em; color: var(--text-3); }
+  .room-tags { display: flex; gap: 6px; margin: 10px 0 14px; flex-wrap: wrap; }
+  .room-foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .seats-count { font: 900 30px/1 var(--f-display); } .seats-count span { font-size: 16px; color: var(--text-3); margin-left: 2px; }
+  .seats-count small { display: block; font: 700 10px/1 var(--f-hud); letter-spacing: .2em; color: var(--text-3); margin-top: 3px; }
+  .need { font: 600 12px/1.3 var(--f-body); color: var(--lose); text-align: right; }
+</style>
+</head>
+<body>
+<div class="page-kicker">XÌ DÁCH · BƯỚC 3 · 07/10/2026</div>
+<h1 class="page-title">Mockup giao diện</h1>
+<p class="page-sub">Phong cách Meta Radar: nền tím than, lưới HUD, điểm nhấn xanh cyan, tím và vàng. Tình huống mẫu: ván 12, đang tới lượt Lan (bạn), cái là Nam.</p>
+
+<!-- ================= 1. BÀN CHƠI MÁY TÍNH ================= -->
+<div class="frame-title">1 · Bàn chơi trên máy tính · 1280 × 720</div>
+<div class="frame desktop">
+  <div class="topbar">
+    <div class="topleft">
+      <div class="wordmark"><b>XÌ DÁCH</b><i><span>21</span></i></div>
+      <div class="sep"></div>
+      <span class="roomname">Bàn vui</span>
+      <div class="codetag"><span>PHÒNG</span><b>K7M2QX</b></div>
+      <span class="chip is-accent">Xoay tua · còn 2 ván</span>
+      <span class="chip is-gold">Cược tự do 100–1.000</span>
+    </div>
+    <div class="icons">
+      <div class="iconbtn" title="Âm thanh"><svg viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19 5a10 10 0 0 1 0 14"/></svg></div>
+      <div class="iconbtn" title="Thêm"><svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></div>
+      <div class="iconbtn" title="Rời phòng"><svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg></div>
+    </div>
+  </div>
+
+  <div class="table"></div>
+  <div class="center" style="left:640px;top:322px">
+    <div class="stock"><img src="../../assets/cards/png/back.png" style="left:6px;top:6px"><img src="../../assets/cards/png/back.png" style="left:3px;top:3px"><img src="../../assets/cards/png/back.png" style="left:0;top:0"></div>
+    <div class="turn"><b>Lượt của bạn</b><em class="num">12s</em></div>
+    <div class="round-info">Ván 12 · Bài tì 33 lá</div>
+  </div>
+
+  <!-- cái: trên giữa -->
+  <div class="seat" style="left:640px;top:122px">
+    <div class="mini"><img src="../../assets/cards/png/back.png"><img src="../../assets/cards/png/back.png"></div>
+    <div class="plate-wrap"><div class="plate is-gold"><div class="avatar" style="background:linear-gradient(135deg,#ffe9b8,#ffcf6b)">N</div><div class="meta"><span class="name">Nam</span><span class="bal num"><b>9.500</b> xu</span></div></div><span class="dealer">CÁI</span></div>
+  </div>
+  <!-- vị trí 1: trên phải -->
+  <div class="seat" style="left:990px;top:156px">
+    <div class="mini"><img src="../../assets/cards/png/back.png"><img src="../../assets/cards/png/back.png"></div>
+    <div class="plate"><div class="avatar" style="background:linear-gradient(135deg,#c7d2fe,#818cf8)">H</div><div class="meta"><span class="name">Hùng</span><span class="bal num"><b>4.800</b> · cược 200</span></div></div>
+    <span class="tag is-draw">Đã dằn</span>
+  </div>
+  <!-- vị trí 2: phải -->
+  <div class="seat" style="left:1140px;top:340px">
+    <div class="mini"><img src="../../assets/cards/png/back.png"><img src="../../assets/cards/png/back.png"><img src="../../assets/cards/png/back.png"><img src="../../assets/cards/png/back.png"></div>
+    <div class="plate"><div class="avatar" style="background:linear-gradient(135deg,#fbcfe8,#f472b6)">M</div><div class="meta"><span class="name">Mai</span><span class="bal num"><b>12.000</b> · cược 500</span></div></div>
+    <span class="tag is-draw">Đã dằn</span>
+  </div>
+  <!-- vị trí 3: dưới phải, xì dách lật sớm -->
+  <div class="seat" style="left:990px;top:520px">
+    <div class="mini"><img src="../../assets/cards/png/AH.png"><img src="../../assets/cards/png/KS.png"></div>
+    <div class="plate is-win"><div class="avatar" style="background:linear-gradient(135deg,#a7f3d0,#2cf5a0)">T</div><div class="meta"><span class="name">Tuấn</span><span class="bal num"><b>7.300</b> · cược 300</span></div></div>
+    <span class="tag is-special">Xì dách <b class="num" style="color:var(--win)">+300</b></span>
+  </div>
+  <!-- vị trí 5: dưới trái -->
+  <div class="seat" style="left:290px;top:520px">
+    <div class="mini"><img src="../../assets/cards/png/back.png"><img src="../../assets/cards/png/back.png"></div>
+    <div class="plate"><div class="avatar" style="background:linear-gradient(135deg,#fed7aa,#fb923c)">H</div><div class="meta"><span class="name">Hoa</span><span class="bal num"><b>3.100</b> · cược 100</span></div></div>
+    <span class="tag is-muted">Chờ lượt</span>
+  </div>
+  <!-- trái: ghế trống -->
+  <div class="seat empty" style="left:140px;top:340px">
+    <div class="plate" style="min-width:150px"><div class="avatar">+</div><span class="sit">Ngồi vào ghế</span></div>
+  </div>
+  <!-- vị trí 7: trên trái, mất kết nối -->
+  <div class="seat" style="left:290px;top:156px">
+    <div class="mini"><img src="../../assets/cards/png/back.png"><img src="../../assets/cards/png/back.png"></div>
+    <div class="plate is-lose"><div class="avatar" style="background:linear-gradient(135deg,#ddd6fe,#a78bfa);opacity:.55">Q</div><div class="meta"><span class="name">Quân</span><span class="bal num"><b>5.000</b> · cược 100</span></div></div>
+    <span class="tag is-lose"><svg viewBox="0 0 24 24"><path d="M2 2l20 20"/><path d="M8.5 16.5a5 5 0 0 1 7 0"/><path d="M5 13a10 10 0 0 1 5.2-2.7"/><path d="M12 20h.01"/></svg>Mất kết nối</span>
+  </div>
+
+  <!-- mình: dưới giữa -->
+  <div class="hand" style="left:640px;top:548px">
+    <div class="cards"><img src="../../assets/cards/png/AS.png"><img src="../../assets/cards/png/5D.png"><img src="../../assets/cards/png/6C.png"></div>
+    <div class="points"><b class="num">21</b><small>NÚT</small></div>
+  </div>
+  <div class="seat active" style="left:640px;top:678px">
+    <div class="plate is-accent"><div class="avatar" style="background:linear-gradient(135deg,#9ff0ff,#38e1ff)">L</div><div class="meta"><span class="name">Lan · bạn</span><span class="bal num"><b>10.200</b> · cược 200</span></div><div class="timer"><i></i></div></div>
+  </div>
+
+  <div class="actions">
+    <button class="act primary"><b>Rút</b><kbd>R</kbd></button>
+    <button class="act gold"><b>Dằn</b><kbd>D</kbd></button>
+  </div>
+  <div class="watchers"><svg viewBox="0 0 24 24"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>3 người xem</div>
+</div>
+
+<!-- ================= 2. BÀN CHƠI ĐIỆN THOẠI NGANG ================= -->
+<div class="frame-title">2 · Bàn chơi trên điện thoại xoay ngang · 740 × 360</div>
+<div class="frame phone">
+  <div class="topbar">
+    <div class="topleft">
+      <div class="wordmark"><b>XÌ DÁCH</b><i><span>21</span></i></div>
+      <div class="sep"></div>
+      <div class="codetag"><span>PHÒNG</span><b>K7M2QX</b></div>
+      <span class="chip is-gold">Tự do 100–1.000</span>
+    </div>
+    <div class="icons">
+      <div class="iconbtn"><svg viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/></svg></div>
+      <div class="iconbtn"><svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></div>
+      <div class="iconbtn"><svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg></div>
+    </div>
+  </div>
+  <div class="table"></div>
+  <div class="center" style="left:362px;top:162px">
+    <div class="stock"><img src="../../assets/cards/png/back.png" style="left:3px;top:3px"><img src="../../assets/cards/png/back.png" style="left:0;top:0"></div>
+    <div class="turn"><b>Lượt của bạn</b><em class="num">12s</em></div>
+    <div class="round-info">Ván 12</div>
+  </div>
+
+  <div class="seat" style="left:362px;top:70px"><div class="mini"><img src="../../assets/cards/png/back.png"><img src="../../assets/cards/png/back.png"></div><div class="plate-wrap"><div class="plate is-gold"><div class="avatar" style="background:linear-gradient(135deg,#ffe9b8,#ffcf6b)">N</div><div class="meta"><span class="name">Nam</span><span class="bal num"><b>9.500</b></span></div></div><span class="dealer">CÁI</span></div></div>
+  <div class="seat" style="left:560px;top:84px"><div class="mini"><img src="../../assets/cards/png/back.png"><img src="../../assets/cards/png/back.png"></div><div class="plate"><div class="avatar" style="background:linear-gradient(135deg,#c7d2fe,#818cf8)">H</div><div class="meta"><span class="name">Hùng</span><span class="bal num"><b>4.800</b></span></div></div><span class="tag is-draw">Đã dằn</span></div>
+  <div class="seat" style="left:652px;top:174px"><div class="mini"><img src="../../assets/cards/png/back.png"><img src="../../assets/cards/png/back.png"><img src="../../assets/cards/png/back.png"><img src="../../assets/cards/png/back.png"></div><div class="plate"><div class="avatar" style="background:linear-gradient(135deg,#fbcfe8,#f472b6)">M</div><div class="meta"><span class="name">Mai</span><span class="bal num"><b>12.000</b></span></div></div><span class="tag is-draw">Đã dằn</span></div>
+  <div class="seat" style="left:556px;top:270px"><div class="mini"><img src="../../assets/cards/png/AH.png"><img src="../../assets/cards/png/KS.png"></div><div class="plate is-win"><div class="avatar" style="background:linear-gradient(135deg,#a7f3d0,#2cf5a0)">T</div><div class="meta"><span class="name">Tuấn</span><span class="bal num"><b>7.300</b></span></div></div><span class="tag is-special">Xì dách <b class="num" style="color:var(--win)">+300</b></span></div>
+  <div class="seat" style="left:170px;top:270px"><div class="mini"><img src="../../assets/cards/png/back.png"><img src="../../assets/cards/png/back.png"></div><div class="plate"><div class="avatar" style="background:linear-gradient(135deg,#fed7aa,#fb923c)">H</div><div class="meta"><span class="name">Hoa</span><span class="bal num"><b>3.100</b></span></div></div><span class="tag is-muted">Chờ lượt</span></div>
+  <div class="seat empty" style="left:62px;top:174px"><div class="plate"><div class="avatar">+</div><span class="sit">Ngồi</span></div></div>
+  <div class="seat" style="left:166px;top:84px"><div class="mini"><img src="../../assets/cards/png/back.png"><img src="../../assets/cards/png/back.png"></div><div class="plate is-lose"><div class="avatar" style="background:linear-gradient(135deg,#ddd6fe,#a78bfa);opacity:.55">Q</div><div class="meta"><span class="name">Quân</span><span class="bal num"><b>5.000</b></span></div></div><span class="tag is-lose">Mất kết nối</span></div>
+
+  <div class="hand" style="left:362px;top:254px">
+    <div class="cards"><img src="../../assets/cards/png/AS.png"><img src="../../assets/cards/png/5D.png"><img src="../../assets/cards/png/6C.png"></div>
+    <div class="points"><b class="num">21</b><small>NÚT</small></div>
+  </div>
+  <div class="seat active" style="left:362px;top:318px"><div class="plate is-accent"><div class="avatar" style="background:linear-gradient(135deg,#9ff0ff,#38e1ff)">L</div><div class="meta"><span class="name">Lan · bạn</span><span class="bal num"><b>10.200</b> · cược 200</span></div><div class="timer"><i></i></div></div></div>
+  <div class="actions">
+    <button class="act primary"><b>Rút</b></button>
+    <button class="act gold"><b>Dằn</b></button>
+  </div>
+</div>
+
+<!-- ================= 3. SẢNH ================= -->
+<div class="frame-title">3 · Sảnh trên máy tính · 1280 × 720</div>
+<div class="frame desktop">
+  <div class="app">
+    <aside class="side">
+      <div class="wordmark"><b>XÌ DÁCH</b><i><span>21</span></i></div>
+      <div class="side-title">MENU</div>
+      <div class="navi on"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Sảnh</div>
+      <div class="navi"><svg viewBox="0 0 24 24"><path d="M3 3v5h5"/><path d="M3.05 13A9 9 0 1 0 6 5.3L3 8"/><path d="M12 7v5l4 2"/></svg>Lịch sử ván</div>
+      <div class="navi"><svg viewBox="0 0 24 24"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></svg>Ví xu</div>
+      <div class="navi"><svg viewBox="0 0 24 24"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>Hướng dẫn</div>
+      <div class="navi"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1"/></svg>Hồ sơ</div>
+      <div class="wallet">
+        <small>SỐ DƯ</small>
+        <b class="num">10.200<span>XU</span></b>
+        <div class="me"><div class="avatar" style="background:linear-gradient(135deg,#9ff0ff,#38e1ff)">L</div><div><b>Lan</b><span>lan_nguyen</span></div></div>
+      </div>
+    </aside>
+    <main class="main">
+      <div class="head">
+        <div>
+          <div class="head-kicker">XÌ DÁCH · SẢNH CHỜ</div>
+          <h1>Chọn bàn để chơi</h1>
+          <p>4 / 5 phòng đang mở · 18 người online</p>
+        </div>
+        <div class="head-actions">
+          <input class="input" placeholder="MÃ PHÒNG" aria-label="Mã phòng">
+          <button class="btn">Vào</button>
+          <button class="btn btn-grad"><svg viewBox="0 0 24 24"><path d="M12 5v14"/><path d="M5 12h14"/></svg>Tạo phòng</button>
+        </div>
+      </div>
+      <div class="toolbar">
+        <div class="tabs"><span class="tab on">Tất cả <span>4</span></span><span class="tab">Đang chờ <span>3</span></span><span class="tab">Đang chơi <span>1</span></span><span class="tab">Còn ghế <span>3</span></span></div>
+        <span class="count">Ẩn phòng không đủ xu · <b>TẮT</b></span>
+      </div>
+      <div class="rooms">
+        <div class="room hot">
+          <div class="room-viz is-accent">
+            <span class="room-state chip is-penalty">Đang chơi</span>
+            <div class="mini-table"><i class="d" style="left:50%;top:-2px"></i><i class="f" style="left:88%;top:16%"></i><i class="f" style="left:102%;top:50%"></i><i class="f" style="left:88%;top:86%"></i><i class="f" style="left:50%;top:102%"></i><i class="f" style="left:12%;top:86%"></i><i style="left:-2%;top:50%"></i><i class="f" style="left:12%;top:16%"></i></div>
+          </div>
+          <div class="room-body">
+            <div class="room-name"><b>Bàn vui</b><span>K7M2QX</span></div>
+            <div class="room-tags"><span class="chip is-gold">Tự do 100–1.000</span><span class="chip is-accent">Xoay tua 3 ván</span></div>
+            <div class="room-foot"><div class="seats-count num">7<span>/8</span><small>GHẾ</small></div><button class="btn btn-grad">Vào xem</button></div>
+          </div>
+        </div>
+        <div class="room">
+          <div class="room-viz is-win">
+            <span class="room-state chip is-win">Đang chờ</span>
+            <div class="mini-table"><i class="d" style="left:50%;top:-2px"></i><i class="f" style="left:88%;top:16%"></i><i style="left:102%;top:50%"></i><i style="left:88%;top:86%"></i><i style="left:50%;top:102%"></i><i style="left:12%;top:86%"></i><i style="left:-2%;top:50%"></i><i style="left:12%;top:16%"></i></div>
+          </div>
+          <div class="room-body">
+            <div class="room-name"><b>Hội anh em</b><span>P4WQ9H</span></div>
+            <div class="room-tags"><span class="chip is-gold">Cược 200</span><span class="chip">Cái cố định</span></div>
+            <div class="room-foot"><div class="seats-count num">2<span>/8</span><small>GHẾ</small></div><button class="btn btn-grad">Vào phòng</button></div>
+          </div>
+        </div>
+        <div class="room">
+          <div class="room-viz is-special">
+            <span class="room-state chip is-win">Đang chờ</span>
+            <div class="room-lock"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+            <div class="mini-table"><i class="d" style="left:50%;top:-2px"></i><i class="f" style="left:88%;top:16%"></i><i class="f" style="left:102%;top:50%"></i><i style="left:88%;top:86%"></i><i style="left:50%;top:102%"></i><i style="left:12%;top:86%"></i><i style="left:-2%;top:50%"></i><i style="left:12%;top:16%"></i></div>
+          </div>
+          <div class="room-body">
+            <div class="room-name"><b>Bàn riêng</b><span>T8ZR3M</span></div>
+            <div class="room-tags"><span class="chip is-gold">Cược 500</span><span class="chip is-accent">Xoay tua 5 ván</span></div>
+            <div class="room-foot"><div class="seats-count num">3<span>/8</span><small>GHẾ</small></div><button class="btn btn-grad">Nhập mật khẩu</button></div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+</body>
+</html>

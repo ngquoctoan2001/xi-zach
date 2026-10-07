@@ -1,0 +1,33 @@
+# --- OS / editor ---
+.DS_Store
+Thumbs.db
+.vs/
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.swp
+
+# --- secrets: never commit real env files ---
+.env
+.env.*
+!.env.example
+
+# --- .NET ---
+bin/
+obj/
+*.user
+TestResults/
+coverage/
+*.coverage
+artifacts/
+
+# --- Node / Next.js ---
+node_modules/
+.next/
+out/
+*.tsbuildinfo
+next-env.d.ts
+npm-debug.log*
+
+# --- local tooling ---
+.claude/settings.local.json

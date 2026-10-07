@@ -1,0 +1,26 @@
+# Reverse proxy (system design 3.1): /api, /hubs and /health/live go to the .NET API, everything else to Next.js.
+# SITE_ADDRESS defaults to plain HTTP on :8080 for local use; set it to the real domain later to get automatic HTTPS.
+{
+	admin off
+}
+
+{$SITE_ADDRESS::8080} {
+	encode zstd gzip
+
+	header {
+		X-Content-Type-Options nosniff
+		Referrer-Policy strict-origin-when-cross-origin
+		X-Frame-Options DENY
+		X-Robots-Tag "noindex, nofollow"
+		-Server
+	}
+
+	@backend path /api/* /hubs/* /health/live
+	handle @backend {
+		reverse_proxy {$API_UPSTREAM:api:8080}
+	}
+
+	handle {
+		reverse_proxy {$WEB_UPSTREAM:web:3000}
+	}
+}

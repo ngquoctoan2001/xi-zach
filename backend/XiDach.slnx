@@ -1,0 +1,13 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/XiDach.Api/XiDach.Api.csproj" />
+    <Project Path="src/XiDach.Game/XiDach.Game.csproj" />
+    <Project Path="src/XiDach.Infrastructure/XiDach.Infrastructure.csproj" />
+    <Project Path="src/XiDach.Rules/XiDach.Rules.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/XiDach.Api.Tests/XiDach.Api.Tests.csproj" />
+    <Project Path="tests/XiDach.Game.Tests/XiDach.Game.Tests.csproj" />
+    <Project Path="tests/XiDach.Rules.Tests/XiDach.Rules.Tests.csproj" />
+  </Folder>
+</Solution>

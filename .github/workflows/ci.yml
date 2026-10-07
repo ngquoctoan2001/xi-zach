@@ -1,0 +1,84 @@
+# CI (system design 10.3): build, lint, test and security checks on every push and pull request.
+name: CI
+
+on:
+  push:
+    branches: [main, "sprint/**"]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  backend:
+    name: Backend (.NET 10)
+    runs-on: ubuntu-latest
+    env:
+      DOTNET_CLI_TELEMETRY_OPTOUT: "1"
+      DOTNET_NOLOGO: "1"
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: 10.0.x
+      - name: Restore
+        run: dotnet restore backend/XiDach.slnx
+      - name: Build (warnings are errors)
+        run: dotnet build backend/XiDach.slnx -c Release --no-restore
+      - name: Test
+        run: dotnet test backend/XiDach.slnx -c Release --no-build --logger "console;verbosity=normal"
+      - name: Vulnerable packages (SEC-07)
+        run: |
+          dotnet list backend/XiDach.slnx package --vulnerable --include-transitive | tee vulnerable.txt
+          if grep -qE "\b(High|Critical)\b" vulnerable.txt; then
+            echo "::error::A dependency has a High or Critical vulnerability"
+            exit 1
+          fi
+
+  frontend:
+    name: Frontend (Next.js)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+      - name: Vulnerable packages (SEC-07)
+        run: npm audit --omit=dev --audit-level=high
+
+  docker:
+    name: Docker images
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Build API image
+        run: docker build --target api -t xidach-api:ci backend
+      - name: Build web image
+        run: docker build -t xidach-web:ci frontend
+
+  secrets:
+    name: Secret scan (SEC-06)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: gitleaks/gitleaks-action@v3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

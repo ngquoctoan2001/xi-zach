@@ -1,0 +1,82 @@
+# Full stack on one machine (system design 10.1). Local use:
+#   copy deploy/.env.example to deploy/.env, then: docker compose -f deploy/compose.yaml up -d --build
+#   open http://localhost:8080 (or http://<this-machine-LAN-IP>:8080 from a phone on the same Wi-Fi)
+name: xidach
+
+services:
+  db:
+    image: postgres:18
+    environment:
+      POSTGRES_DB: xidach
+      POSTGRES_USER: xidach
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in deploy/.env}
+    volumes:
+      - pgdata:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U xidach -d xidach"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+
+  seq:
+    image: datalust/seq:latest
+    environment:
+      ACCEPT_EULA: "Y"
+      SEQ_FIRSTRUN_NOAUTHENTICATION: "true"
+    volumes:
+      - seqdata:/data
+    ports:
+      - "127.0.0.1:${SEQ_UI_PORT:-5341}:80"
+    restart: unless-stopped
+
+  migrator:
+    build:
+      context: ../backend
+      target: api
+    image: xidach-api:local
+    command: ["migrate"]
+    environment:
+      ConnectionStrings__Default: Host=db;Database=xidach;Username=xidach;Password=${POSTGRES_PASSWORD};Gss Encryption Mode=Disable
+      Seq__ServerUrl: http://seq:5341
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: "no"
+
+  api:
+    image: xidach-api:local
+    environment:
+      ConnectionStrings__Default: Host=db;Database=xidach;Username=xidach;Password=${POSTGRES_PASSWORD};Gss Encryption Mode=Disable
+      Seq__ServerUrl: http://seq:5341
+    depends_on:
+      migrator:
+        condition: service_completed_successfully
+    restart: unless-stopped
+
+  web:
+    build:
+      context: ../frontend
+    image: xidach-web:local
+    restart: unless-stopped
+
+  caddy:
+    image: caddy:2
+    environment:
+      SITE_ADDRESS: ${SITE_ADDRESS:-:8080}
+    ports:
+      - "${HTTP_PORT:-8080}:8080"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddydata:/data
+      - caddyconfig:/config
+    depends_on:
+      - api
+      - web
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+  seqdata:
+  caddydata:
+  caddyconfig:

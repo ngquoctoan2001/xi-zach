@@ -1,6 +1,6 @@
 # Thiết kế hệ thống: game Xì Dách
 
-Phiên bản 1.0 · 07/10/2026 · Trạng thái: **đã chốt**
+Phiên bản 1.1 · 07/10/2026 · Trạng thái: **đã chốt**
 
 Đây là bước 2 trong [quy trình phát triển](00-quy-trinh-phat-trien.md), dựa trên [phân tích yêu cầu 1.0](01-phan-tich-yeu-cau.md) và [luật chơi 0.7](luat-xi-dach.md). Mã trong ngoặc vuông, ví dụ [GAME-05], là yêu cầu mà phần thiết kế đó đáp ứng.
 
@@ -670,7 +670,7 @@ Dùng FsCheck sinh hàng nghìn ván ngẫu nhiên và kiểm tra:
 | caddy | caddy:2 | 80, 443 công khai | HTTPS tự động |
 | web | build từ `frontend` trên node:24-alpine | 3000, nội bộ | |
 | api | build từ `backend` trên mcr.microsoft.com/dotnet/aspnet:10.0 | 8080, nội bộ | |
-| migrator | build từ `backend` (EF migration bundle) | | chạy một lần, xong thì api mới khởi động [MAIN-05] |
+| migrator | dùng chính image của api, chạy lệnh `migrate` | | chạy một lần (áp migration, sau này thêm dữ liệu khởi tạo), xong thì api mới khởi động [MAIN-05] |
 | db | postgres:18 | 5432, nội bộ | dữ liệu nằm trong volume `pgdata` |
 | backup | postgres:18 kèm script chạy theo lịch | | pg_dump lúc 02:00 hằng ngày, giữ 7 bản, đẩy một bản lên Google Drive hoặc Backblaze B2 bằng rclone [REL-06, D3] |
 | seq | datalust/seq | 5341, nội bộ | xem qua đường hầm SSH |
@@ -766,5 +766,6 @@ Tên ca kiểm thử bắt đầu bằng mã yêu cầu, ví dụ `GAME05_Hit_Dr
 
 ## 16. Lịch sử thay đổi
 
+- **1.1 (07/10/2026, sprint S0):** container `migrator` dùng chính image của api với lệnh `migrate` thay cho EF migration bundle: một image, cùng mã nguồn, dễ thêm dữ liệu khởi tạo. Chuỗi kết nối PostgreSQL tắt GSS (`Gss Encryption Mode=Disable`) vì không dùng Kerberos.
 - **1.0 (07/10/2026):** chốt bước 2 và các quyết định D1–D5.
 - **0.1 (07/10/2026):** bản nháp đầu tiên.
